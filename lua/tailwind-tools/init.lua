@@ -59,7 +59,7 @@ M.setup = function(options)
   if vim.version().minor < 10 and config.options.document_color.kind == "inline" then
     log.warn(
       "Neovim v0.10 is required for inline color hints, using fallback option."
-        .. ' Should use value "foreground" or "background" for document_color.kind'
+      .. ' Should use value "foreground" or "background" for document_color.kind'
     )
     config.options.document_color.kind = "background"
   end
@@ -75,10 +75,9 @@ M.setup = function(options)
 
   local server_opts = config.options.server
   local has_telescope, telescope = pcall(require, "telescope")
-  local has_lspconfig, lspconfig = pcall(require, "lspconfig")
 
   if has_telescope then telescope.load_extension("tailwind") end
-  if has_lspconfig and server_opts.override then lsp.setup(server_opts, lspconfig) end
+  if server_opts.override then lsp.setup(server_opts) end
   if config.options.keymaps.smart_increment.enabled then keymaps.set_smart_increment() end
 
   register_usercmd()

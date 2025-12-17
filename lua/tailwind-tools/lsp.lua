@@ -124,15 +124,22 @@ end
 ---@module 'lspconfig.configs'
 
 ---@param server_config TailwindTools.ServerOption
----@param lspconfig { tailwindcss: lspconfig.Config }
-M.setup = function(server_config, lspconfig)
+M.setup = function(server_config)
   local conf = { settings = {} }
   conf.on_attach = M.make_on_attach(server_config.on_attach)
-  conf.root_dir = server_config.root_dir or M.make_root_dir(lspconfig)
+  conf.root_markers = {
+    '.git',
+    'package.json',
+    "tailwind.config.{js,cjs,mjs,ts}",
+    "assets/tailwind.config.{js,cjs,mjs,ts}",
+    "theme/static_src/tailwind.config.{js,cjs,mjs,ts}",
+    "app/assets/stylesheets/application.tailwind.css",
+    "app/assets/tailwind/application.css",
+  }
 
   conf.settings.tailwindCSS = vim.tbl_get(server_config, "settings", "tailwindCSS") or {}
   conf.settings.tailwindCSS =
-    vim.tbl_deep_extend("keep", conf.settings.tailwindCSS, server_config.settings)
+      vim.tbl_deep_extend("keep", conf.settings.tailwindCSS, server_config.settings)
   conf.settings.tailwindCSS.includeLanguages = vim.tbl_extend(
     "keep",
     server_config.settings.includeLanguages or {},
@@ -144,7 +151,8 @@ M.setup = function(server_config, lspconfig)
     dynamicRegistration = true,
   }
 
-  lspconfig.tailwindcss.setup(conf)
+  vim.lsp.enable("tailwindcss")
+  vim.lsp.config("tailwindcss", conf)
 end
 
 ---@type fun(lspconfig: any)
